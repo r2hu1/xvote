@@ -28,7 +28,7 @@ This is an anonymous polling application built using Firebase for the backend an
 1. Clone the repository:
    ```bash
    git clone https://github.com/r2hu1/xvote-app.git
-   cd anonymous-polling-app
+   cd xvote
    ```
 
 2. Install the dependencies:
