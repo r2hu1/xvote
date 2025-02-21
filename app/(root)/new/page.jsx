@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { createPoll } from "@/server/createPoll";
-import { Minus, Plus } from "lucide-react";
+import { Loader2, Minus, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -15,6 +15,7 @@ import { toast } from "sonner";
 export default function Page() {
     const router = useRouter();
     const user = useContext(AuthContext);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (!user.user) {
@@ -34,29 +35,43 @@ export default function Page() {
 
     const handlePublish = async (e) => {
         e.preventDefault();
+        setLoading(true);
         let title = e.target.title.value;
-        let content = e.target.content.value;
         let tags = e.target.tags.value.split(",");
         let optionsArray = [
-            e.target.option1.value,
-            e.target.option2.value,
-            options >= 1 && e.target.option3.value,
-            options === 2 && e.target.option4.value
+            {
+                content: e.target.option1.value,
+                clicks: 0
+            },
+            {
+                content: e.target.option2.value,
+                clicks: 0
+            },
+            {
+                content: options >= 1 && e.target.option3.value,
+                clicks: 0
+            },
+            {
+                content: options === 2 && e.target.option4.value,
+                clicks: 0
+            }
         ];
 
         let res = await createPoll({
+            username: user.user.username,
             author: user.user.id,
             title,
-            content,
             options: optionsArray,
             tags,
         });
         let data = JSON.parse(res);
         if (data.success) {
-            router.push(`/`);
+            toast.success("Poll published successfully!");
+            router.push(`/poll/${data.id}`);
         } else {
             toast.error(data.error);
         }
+        setLoading(false);
     };
 
     return (
@@ -70,9 +85,7 @@ export default function Page() {
             <div className="mt-10">
                 <form onSubmit={handlePublish} className="grid gap-2 max-w-2sxl">
                     <Label htmlFor="title">Title</Label>
-                    <Input name="title" id="title" type="text" placeholder="Who will win, McGregor or Ronaldo?" className="bg-background" />
-                    <Label htmlFor="content" className="mt-2">Description</Label>
-                    <Textarea name="content" id="content" placeholder="What do you ..." className="bg-background" />
+                    <Textarea required maxLength={100} name="title" id="title" placeholder="Who will win, McGregor or Ronaldo?" className="bg-background" />
                     <div className="flex items-center justify-between mt-3 mb-1">
                         <Label>Options</Label>
                         <div className="flex items-center gap-2">
@@ -89,14 +102,14 @@ export default function Page() {
                         </div>
                     </div>
                     <div className="grid mb-3 gap-2 md:grid-cols-2">
-                        <Input name="option1" placeholder="Option 1" required />
-                        <Input name="option2" placeholder="Option 2" required />
-                        <Input name="option3" placeholder="Option 3" className={options >= 1 ? "block" : "hidden"} required={options >= 1} />
-                        <Input name="option4" placeholder="Option 4" className={options === 2 ? "block" : "hidden"} required={options === 2} />
+                        <Input maxLength={50} name="option1" placeholder="Option 1" required />
+                        <Input maxLength={50} name="option2" placeholder="Option 2" required />
+                        <Input maxLength={50} name="option3" placeholder="Option 3" className={options >= 1 ? "block" : "hidden"} required={options >= 1} />
+                        <Input maxLength={50} name="option4" placeholder="Option 4" className={options === 2 ? "block" : "hidden"} required={options === 2} />
                     </div>
-                    <Label htmlFor="tags">Tags</Label>
+                    <Label htmlFor="tags">Tags (optional)</Label>
                     <Input name="tags" id="tags" type="text" placeholder="Add tags separated by commas ," />
-                    <Button type="submit" className="mt-3">Publish</Button>
+                    <Button type="submit" className="mt-3" disabled={loading}>{loading ? <Loader2 className="mr-2 animate-spin" /> : "Publish"}</Button>
                 </form>
             </div>
         </main>
