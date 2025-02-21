@@ -31,15 +31,15 @@ export default function Page() {
     };
 
     return (
-        <main className="px-6 py-10 mb-10">
-            <div className="grid gap-2">
+        <main className="px-6 py-10 mb-10 md:px-20 lg:px-32">
+            <div className="grid gap-2 max-w-md">
                 <h1 className="text-lg font-medium">Drafting an Anonymous Poll</h1>
                 <p className="text-foreground/80 text-sm">
                     It’s fully secure and anonymous. No one can see your real identity, so you can make a poll about anything you want!
                 </p>
             </div>
             <div className="mt-10">
-                <form className="grid gap-2">
+                <form className="grid gap-2 max-w-2sxl">
                     <Label htmlFor="title">Title</Label>
                     <Input id="title" type="text" placeholder="Who will win, McGregor or Ronaldo?" className="bg-background" />
                     <Label htmlFor="content" className="mt-2">Description</Label>
@@ -59,7 +59,7 @@ export default function Page() {
                             )}
                         </div>
                     </div>
-                    <div className="grid mb-3 gap-2">
+                    <div className="grid mb-3 gap-2 md:grid-cols-2">
                         <Input placeholder="Option 1" required />
                         <Input placeholder="Option 2" required />
                         <Input
