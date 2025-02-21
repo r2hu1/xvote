@@ -32,7 +32,7 @@ export default function Home() {
   const handlePollClick = async (pollId, optionIndex) => {
     setLoading(true);
     try {
-      const req = await updatePollResult({ pollId, optionIndex, userId: user.user.id });
+      const req = await updatePollResult({ pollId, optionIndex, userId: user?.user?.id });
       const data = JSON.parse(req);
       if (!data.success) {
         toast.error(data.error);
@@ -47,7 +47,7 @@ export default function Home() {
 
   const handleLikeClick = async (pollId) => {
     try {
-      const req = await likePoll({ pollId, userId: user.user.id });
+      const req = await likePoll({ pollId, userId: user?.user?.id });
       const data = JSON.parse(req);
       if (!data.success) {
         toast.error(data.error);
