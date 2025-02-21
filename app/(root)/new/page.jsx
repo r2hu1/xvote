@@ -64,12 +64,12 @@ export default function Page() {
                         />
                         <div className="flex items-center mt-1 justify-end gap-2">
                             {options < 2 && (
-                                <Button className="!w-fit h-8 px-3 gap-2 rounded-full" onClick={addOption} type="button">
+                                <Button className="!w-fit h-8 px-2 gap-2 rounded-full" onClick={addOption} type="button">
                                     <Plus className="h-4 w-4" />
                                 </Button>
                             )}
                             {options > 0 && (
-                                <Button className="!w-fit h-8 px-3 gap-2 rounded-full" onClick={removeOption} type="button">
+                                <Button className="!w-fit h-8 px-2 gap-2 rounded-full" onClick={removeOption} type="button">
                                     <Minus className="h-4 w-4" />
                                 </Button>
                             )}
