@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
         <AuthProvider>
           {children}
         </AuthProvider>
-        <Toaster position="top-center" visibleToasts={1} />
+        <Toaster position="top-center" duration={2000} />
       </body>
     </html>
   );
