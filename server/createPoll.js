@@ -1,8 +1,8 @@
 "use server";
 import { db } from "@/lib/firebase";
-import { collection, addDoc, doc, getDoc } from "firebase/firestore";
+import { collection, addDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 
-export const createPoll = async ({ author, title, content, options, likes = [], tags = [] }) => {
+export const createPoll = async ({ username, author, title, options, likes = [], tags = [], comments = [] }) => {
     if (!author) return JSON.stringify({ success: false, error: 'Unauthorized' });
     if (!options) return JSON.stringify({ success: false, error: 'No options provided' });
     if (options.length >= 5) return JSON.stringify({ success: false, error: 'Max 4 options' });
@@ -16,19 +16,21 @@ export const createPoll = async ({ author, title, content, options, likes = [], 
 
         const pollsCollectionRef = collection(db, 'polls');
         const pollRef = await addDoc(pollsCollectionRef, {
+            username,
             author,
             title,
-            content,
             options,
             option_count: options.length,
             likes,
             tags,
+            comments,
             created_at: new Date().toLocaleString(),
         });
-
-        const createAuthorHist = await addDoc(authorCollectionRef, {
-            pollId: pollRef.id,
-            created_at: new Date().toLocaleString(),
+        const authorDocRef = doc(db, 'authors', author);
+        const authorDocSnap = await getDoc(authorDocRef);
+        const polls = authorDocSnap.data().polls ?? [];
+        await updateDoc(authorDocRef, {
+            polls: [...polls, pollRef.id]
         });
 
         return JSON.stringify({ success: true, id: pollRef.id });
