@@ -1,5 +1,6 @@
 "use client";
 
+import { AuthContext } from "@/components/auth-context";
 import Logo from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,11 +11,10 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { createUser } from "@/server/createUser";
-import { getUser } from "@/server/getUser";
 import { ChevronLeft, Copy, Loader2, Save } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function Page() {
@@ -95,15 +95,12 @@ export default function Page() {
         }
     };
 
+    const user = useContext(AuthContext);
     useEffect(() => {
-        const fetchUser = async () => {
-            const user = await getUser();
-            if (user) {
-                router.push("/");
-            }
-        };
-        fetchUser();
-    }, []);
+        if (user.user) {
+            router.push("/");
+        }
+    }, [user]);
 
     return (
         <main className="w-full max-w-md">

@@ -1,5 +1,6 @@
 "use client";
 
+import { AuthContext } from "@/components/auth-context";
 import Logo from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,13 +10,11 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { getUser } from "@/server/getUser";
 import { signinUser } from "@/server/signinUser";
 import { ChevronLeft, FileJson, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function Page() {
@@ -84,15 +83,12 @@ export default function Page() {
         setLoading(false);
     };
 
+    const user = useContext(AuthContext);
     useEffect(() => {
-        const fetchUser = async () => {
-            const user = await getUser();
-            if (user) {
-                router.push("/");
-            }
-        };
-        fetchUser();
-    }, []);
+        if (user.user) {
+            router.push("/");
+        }
+    }, [user]);
     return (
         <main className="w-full max-w-md">
             <div className="grid gap-3">
