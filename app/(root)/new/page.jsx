@@ -37,26 +37,28 @@ export default function Page() {
         let title = e.target.title.value;
         let content = e.target.content.value;
         let tags = e.target.tags.value.split(",");
-        let optionsA = [];
-        let opL = e.target.options.length;
-        for (let i = 1; i < opL.length; i++) {
-            if (e.target.options[i].value != "") optionsA.push(e.target.options[i].value);
-        }
+        let optionsArray = [
+            e.target.option1.value,
+            e.target.option2.value,
+            options >= 1 && e.target.option3.value,
+            options === 2 && e.target.option4.value
+        ];
+
         let res = await createPoll({
             author: user.user.id,
             title,
             content,
-            options: optionsA,
+            options: optionsArray,
             tags,
         });
         let data = JSON.parse(res);
         if (data.success) {
-            router.push(`/poll/${data.pollId}`);
-        }
-        else {
+            router.push(`/`);
+        } else {
             toast.error(data.error);
         }
     };
+
     return (
         <main className="px-6 py-10 mb-10 md:px-20 lg:px-32">
             <div className="grid gap-2 max-w-md">
@@ -87,10 +89,10 @@ export default function Page() {
                         </div>
                     </div>
                     <div className="grid mb-3 gap-2 md:grid-cols-2">
-                        <Input name="options" placeholder="Option 1" required />
-                        <Input name="options" placeholder="Option 2" required />
-                        <Input name="options" placeholder="Option 3" className={options >= 1 ? "block" : "hidden"} required={options >= 1} />
-                        <Input name="options" placeholder="Option 4" className={options === 2 ? "block" : "hidden"} required={options === 2} />
+                        <Input name="option1" placeholder="Option 1" required />
+                        <Input name="option2" placeholder="Option 2" required />
+                        <Input name="option3" placeholder="Option 3" className={options >= 1 ? "block" : "hidden"} required={options >= 1} />
+                        <Input name="option4" placeholder="Option 4" className={options === 2 ? "block" : "hidden"} required={options === 2} />
                     </div>
                     <Label htmlFor="tags">Tags</Label>
                     <Input name="tags" id="tags" type="text" placeholder="Add tags separated by commas ," />

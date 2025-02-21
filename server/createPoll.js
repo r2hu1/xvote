@@ -5,7 +5,7 @@ import { collection, addDoc, doc, getDoc } from "firebase/firestore";
 export const createPoll = async ({ author, title, content, options, likes = [], tags = [] }) => {
     if (!author) return JSON.stringify({ success: false, error: 'Unauthorized' });
     if (!options) return JSON.stringify({ success: false, error: 'No options provided' });
-    if (options.length <= 5) return JSON.stringify({ success: false, error: 'Max 4 options' });
+    if (options.length >= 5) return JSON.stringify({ success: false, error: 'Max 4 options' });
     if (!title) return JSON.stringify({ success: false, error: 'No title provided' });
 
     try {
