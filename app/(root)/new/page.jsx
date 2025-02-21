@@ -6,9 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { createPoll } from "@/server/createPoll";
 import { Minus, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function Page() {
     const router = useRouter();
@@ -30,6 +32,31 @@ export default function Page() {
         setOptions((prev) => (prev > 0 ? prev - 1 : prev));
     };
 
+    const handlePublish = async (e) => {
+        e.preventDefault();
+        let title = e.target.title.value;
+        let content = e.target.content.value;
+        let tags = e.target.tags.value.split(",");
+        let optionsA = [];
+        let opL = e.target.options.length;
+        for (let i = 1; i < opL.length; i++) {
+            if (e.target.options[i].value != "") optionsA.push(e.target.options[i].value);
+        }
+        let res = await createPoll({
+            author: user.user.id,
+            title,
+            content,
+            options: optionsA,
+            tags,
+        });
+        let data = JSON.parse(res);
+        if (data.success) {
+            router.push(`/poll/${data.pollId}`);
+        }
+        else {
+            toast.error(data.error);
+        }
+    };
     return (
         <main className="px-6 py-10 mb-10 md:px-20 lg:px-32">
             <div className="grid gap-2 max-w-md">
@@ -39,11 +66,11 @@ export default function Page() {
                 </p>
             </div>
             <div className="mt-10">
-                <form className="grid gap-2 max-w-2sxl">
+                <form onSubmit={handlePublish} className="grid gap-2 max-w-2sxl">
                     <Label htmlFor="title">Title</Label>
-                    <Input id="title" type="text" placeholder="Who will win, McGregor or Ronaldo?" className="bg-background" />
+                    <Input name="title" id="title" type="text" placeholder="Who will win, McGregor or Ronaldo?" className="bg-background" />
                     <Label htmlFor="content" className="mt-2">Description</Label>
-                    <Textarea id="content" placeholder="What do you ..." className="bg-background" />
+                    <Textarea name="content" id="content" placeholder="What do you ..." className="bg-background" />
                     <div className="flex items-center justify-between mt-3 mb-1">
                         <Label>Options</Label>
                         <div className="flex items-center gap-2">
@@ -60,21 +87,14 @@ export default function Page() {
                         </div>
                     </div>
                     <div className="grid mb-3 gap-2 md:grid-cols-2">
-                        <Input placeholder="Option 1" required />
-                        <Input placeholder="Option 2" required />
-                        <Input
-                            placeholder="Option 3"
-                            className={options >= 1 ? "block" : "hidden"}
-                            required={options >= 1}
-                        />
-                        <Input
-                            placeholder="Option 4"
-                            className={options === 2 ? "block" : "hidden"}
-                            required={options === 2}
-                        />
-
+                        <Input name="options" placeholder="Option 1" required />
+                        <Input name="options" placeholder="Option 2" required />
+                        <Input name="options" placeholder="Option 3" className={options >= 1 ? "block" : "hidden"} required={options >= 1} />
+                        <Input name="options" placeholder="Option 4" className={options === 2 ? "block" : "hidden"} required={options === 2} />
                     </div>
-                    <Button type="submit">Publish</Button>
+                    <Label htmlFor="tags">Tags</Label>
+                    <Input name="tags" id="tags" type="text" placeholder="Add tags separated by commas ," />
+                    <Button type="submit" className="mt-3">Publish</Button>
                 </form>
             </div>
         </main>
