@@ -94,7 +94,7 @@ export default function Page() {
         fetchUser();
     }, []);
     return (
-        <main>
+        <main className="w-full max-w-md">
             <div className="grid gap-3">
                 <div className="flex items-center justify-between">
                     <Logo />
@@ -108,7 +108,7 @@ export default function Page() {
                 <p className="text-base max-w-xs text-foreground/80 -mt-2.5">Signin to your anonymous account to continue.
                     Don't have an account? <Link className="text-foreground underline" href="/signup">SignUp</Link></p>
             </div>
-            <div className="mt-5">
+            <div className="mt-10">
                 <form onSubmit={handleSignin} className="grid gap-2">
                     <Label htmlFor="username">Username</Label>
                     <Input onChange={(e) => { setUsername(e.target.value) }} value={username} onFocus={(e) => { e.target.placeholder = "" }} onBlur={(e) => { e.target.placeholder = "Anonymous-user-1" }} autoComplete="off" id="username" name="username" placeholder="Anonymous-user-1" />
@@ -122,11 +122,11 @@ export default function Page() {
                             <PopoverContent className="text-sm -mr-20">Its encrypted we can't help you with that. Maybe create a new account?!</PopoverContent>
                         </Popover>
                     </div>
-                    <Button type="submit" className="mt-2" disabled={loading}>{loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Continue"}</Button>
+                    <Button type="submit" className="mt-2" disabled={loading || loading2}>{loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Continue"}</Button>
                 </form>
                 <div className="mt-5 grid gap-4">
                     <p className="text-sm text-center text-foreground/80">Or</p>
-                    <Button asChild variant={loading2 ? "outline" : "secondary"} disabled={loading2}>
+                    <Button asChild variant={loading2 ? "outline" : "secondary"} disabled={loading2 || loading}>
                         <Label htmlFor="hashFile" className="flex items-center justify-center gap-2">{loading2 ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileJson className="h-4 w-4" />} {loading2 ? "" : "Continue with hash file"}</Label>
                     </Button>
                     <Input multiple={false} onChange={handleFileSelect} className="hidden" type="file" accept=".json" id="hashFile" name="hashFile" />

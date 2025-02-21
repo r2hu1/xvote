@@ -106,7 +106,7 @@ export default function Page() {
     }, []);
 
     return (
-        <main>
+        <main className="w-full max-w-md">
             <div className="grid gap-3">
                 <div className="flex items-center justify-between">
                     <Logo />
