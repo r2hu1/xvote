@@ -2,10 +2,11 @@
 import { db } from "@/lib/firebase";
 import { collection, addDoc, doc, getDoc } from "firebase/firestore";
 
-export const createPoll = async ({ author, content, options, likes = [] }) => {
+export const createPoll = async ({ author, title, content, options, likes = [], tags = [] }) => {
     if (!author) return JSON.stringify({ success: false, error: 'Unauthorized' });
     if (!options) return JSON.stringify({ success: false, error: 'No options provided' });
     if (options.length <= 5) return JSON.stringify({ success: false, error: 'Max 4 options' });
+    if (!title) return JSON.stringify({ success: false, error: 'No title provided' });
 
     try {
         const authorCollectionRef = collection(db, 'authors');
@@ -16,10 +17,12 @@ export const createPoll = async ({ author, content, options, likes = [] }) => {
         const pollsCollectionRef = collection(db, 'polls');
         const pollRef = await addDoc(pollsCollectionRef, {
             author,
+            title,
             content,
             options,
             option_count: options.length,
             likes,
+            tags,
             created_at: new Date().toLocaleString(),
         });
 
