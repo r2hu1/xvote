@@ -1,27 +1,45 @@
-"use server"
+"use server";
 
 import { db } from "@/lib/firebase";
 import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
 
 export const updatePollResult = async ({ pollId, optionIndex, userId }) => {
-    if (!userId) return JSON.stringify({ success: false, error: 'Unauthorized' });
-    try {
-        const authorCollectionRef = collection(db, 'authors');
-        const authorDoc = await getDoc(doc(authorCollectionRef, userId));
-        if (!authorDoc.exists()) return JSON.stringify({ success: false, error: 'Invalid author' });
+    if (!userId) return JSON.stringify({ success: false, error: "Unauthorized" });
 
-        const pollsCollectionRef = collection(db, 'polls');
+    try {
+        const pollsCollectionRef = collection(db, "polls");
         const pollRef = doc(pollsCollectionRef, pollId);
-        const poll = await getDoc(pollRef);
-        if (poll.exists()) {
-            const pollData = poll.data();
-            const newClicks = pollData.options.map((option, index) =>
-                index === optionIndex ? option.clicks + 1 : option.clicks
-            );
-            await updateDoc(pollRef, { options: pollData.options.map((option, index) => ({ ...option, clicks: newClicks[index] })) });
-            return JSON.stringify({ success: true });
+        const pollSnapshot = await getDoc(pollRef);
+
+        if (!pollSnapshot.exists()) {
+            return JSON.stringify({ success: false, error: "Poll not found" });
         }
-        return JSON.stringify({ success: false, error: 'Poll not found' });
+
+        const pollData = pollSnapshot.data();
+        const userClickIndex = pollData.clicks?.findIndex((click) => click.userId === userId);
+        const prevOptionIndex = userClickIndex !== -1 ? pollData.clicks[userClickIndex].optionIndex : null;
+
+        let updatedOptions = [...pollData.options];
+
+        if (prevOptionIndex !== null && prevOptionIndex !== optionIndex) {
+            updatedOptions[prevOptionIndex].clicks = Math.max(0, updatedOptions[prevOptionIndex].clicks - 1);
+        }
+
+        updatedOptions[optionIndex].clicks = (updatedOptions[optionIndex].clicks || 0) + 1;
+
+        const updatedClicks =
+            prevOptionIndex !== null
+                ? pollData.clicks.map((click) =>
+                    click.userId === userId ? { userId, optionIndex } : click
+                )
+                : [...(pollData.clicks || []), { userId, optionIndex }];
+
+        await updateDoc(pollRef, {
+            options: updatedOptions,
+            clicks: updatedClicks,
+        });
+
+        return JSON.stringify({ success: true });
     } catch (e) {
         return JSON.stringify({ success: false, error: e.message });
     }
