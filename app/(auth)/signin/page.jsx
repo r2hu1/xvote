@@ -30,9 +30,9 @@ export default function Page() {
             <div className="mt-10">
                 <form className="grid gap-2">
                     <Label htmlFor="username">Username</Label>
-                    <Input autocomplete="off" id="username" name="username" placeholder="Anonymous-user-1" />
+                    <Input onFocus={(e) => { e.target.placeholder = "" }} onBlur={(e) => { e.target.placeholder = "Anonymous-user-1" }} autoComplete="off" id="username" name="username" placeholder="Anonymous-user-1" />
                     <Label htmlFor="hash" className="mt-2">Hash</Label>
-                    <Input autocomplete="off" id="hash" name="hash" placeholder="*******" />
+                    <Input onFocus={(e) => { e.target.placeholder = "" }} onBlur={(e) => { e.target.placeholder = "**********" }} autoComplete="off" id="hash" name="hash" placeholder="**********" />
                     <div>
                         <Popover>
                             <PopoverTrigger>
