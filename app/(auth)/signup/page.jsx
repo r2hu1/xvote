@@ -10,9 +10,11 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { createUser } from "@/server/createUser";
+import { getUser } from "@/server/getUser";
 import { ChevronLeft, Copy, Loader2, Save } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function Page() {
@@ -91,6 +93,17 @@ export default function Page() {
         }
     };
 
+    const router = useRouter();
+    useEffect(() => {
+        const fetchUser = async () => {
+            const user = await getUser();
+            if (user) {
+                router.push("/");
+            }
+        };
+        fetchUser();
+    }, []);
+
     return (
         <main>
             <div className="grid gap-3">
@@ -123,6 +136,7 @@ export default function Page() {
                         </Popover>
                     </div>
                     <Button disabled={loading} type="submit" className="mt-2">{loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Sign Up"}</Button>
+                    <p className="text-sm text-foreground/80 text-center">Already have an account? <Link className="text-foreground underline" href="/signin">SignIn</Link></p>
                 </form>
             </div>
         </main>
