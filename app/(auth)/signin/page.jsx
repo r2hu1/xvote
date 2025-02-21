@@ -23,6 +23,7 @@ export default function Page() {
     const [hash, setHash] = useState("");
     const [selectedFile, setSelectedFile] = useState(null);
     const [loading, setLoading] = useState(false);
+    const router = useRouter();
 
     const handleFileSelect = (e) => {
         if (e.target.files.length == 0) return;
@@ -56,6 +57,7 @@ export default function Page() {
             let data = JSON.parse(res);
             if (data.success) {
                 toast.success("Signed in successfully!");
+                router.push("/");
             }
             else {
                 toast.error(data.error);
@@ -70,7 +72,6 @@ export default function Page() {
         setLoading(false);
     };
 
-    const router = useRouter();
     useEffect(() => {
         const fetchUser = async () => {
             const user = await getUser();

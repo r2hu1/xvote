@@ -21,6 +21,7 @@ export default function Page() {
     const [username, setUsername] = useState("");
     const [hash, setHash] = useState("");
     const [loading, setLoading] = useState(false);
+    const router = useRouter();
 
     const createHash = (e) => {
         setUsername(e.slice(0, 10));
@@ -55,6 +56,7 @@ export default function Page() {
             if (data.success) {
                 downloadHash();
                 toast.success("Signed up successfully!");
+                router.push("/signin");
             }
             else {
                 toast.error(data.error);
@@ -93,7 +95,6 @@ export default function Page() {
         }
     };
 
-    const router = useRouter();
     useEffect(() => {
         const fetchUser = async () => {
             const user = await getUser();
