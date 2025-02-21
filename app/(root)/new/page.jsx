@@ -20,8 +20,6 @@ export default function Page() {
         }
     }, [user, router]);
 
-    // options value here represents the number of extra options
-    // 0 means only Option 1 and Option 2, 1 means Option 3 is shown, 2 means Option 3 and Option 4 are shown.
     const [options, setOptions] = useState(0);
 
     const addOption = () => {
@@ -46,34 +44,35 @@ export default function Page() {
                     <Input id="title" type="text" placeholder="Who will win, McGregor or Ronaldo?" className="bg-background" />
                     <Label htmlFor="content" className="mt-2">Description</Label>
                     <Textarea id="content" placeholder="What do you ..." className="bg-background" />
-                    <Label className="mt-2">Options</Label>
+                    <div className="flex items-center justify-between mt-3 mb-1">
+                        <Label>Options</Label>
+                        <div className="flex items-center gap-2">
+                            {options < 2 && (
+                                <Button className="!w-fit h-4 p-0" onClick={addOption} type="button">
+                                    <Plus className="h-4 w-4" />
+                                </Button>
+                            )}
+                            {options > 0 && (
+                                <Button className="!w-fit h-4 p-0" onClick={removeOption} type="button">
+                                    <Minus className="h-4 w-4" />
+                                </Button>
+                            )}
+                        </div>
+                    </div>
                     <div className="grid mb-3 gap-2">
                         <Input placeholder="Option 1" required />
                         <Input placeholder="Option 2" required />
-                        {/* Option 3 is shown when options >= 1 */}
                         <Input
                             placeholder="Option 3"
                             className={options >= 1 ? "block" : "hidden"}
                             required={options >= 1}
                         />
-                        {/* Option 4 is shown when options === 2 */}
                         <Input
                             placeholder="Option 4"
                             className={options === 2 ? "block" : "hidden"}
                             required={options === 2}
                         />
-                        <div className="flex items-center mt-1 justify-end gap-2">
-                            {options < 2 && (
-                                <Button className="!w-fit h-8 px-2 gap-2 rounded-full" onClick={addOption} type="button">
-                                    <Plus className="h-4 w-4" />
-                                </Button>
-                            )}
-                            {options > 0 && (
-                                <Button className="!w-fit h-8 px-2 gap-2 rounded-full" onClick={removeOption} type="button">
-                                    <Minus className="h-4 w-4" />
-                                </Button>
-                            )}
-                        </div>
+
                     </div>
                     <Button type="submit">Publish</Button>
                 </form>
