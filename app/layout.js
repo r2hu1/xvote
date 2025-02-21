@@ -1,6 +1,7 @@
 import { Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
+import { AuthProvider } from "@/components/auth-context";
 
 const font = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -18,7 +19,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={font.className}>
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
         <Toaster position="top-center" visibleToasts={1} />
       </body>
     </html>
