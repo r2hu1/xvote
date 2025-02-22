@@ -64,7 +64,8 @@ export const updatePoll = async ({ id, author, content, options }) => {
 };
 
 export const updatePollResult = async ({ pollId, optionIndex, userId }) => {
-    if (!userId) return JSON.stringify({ success: false, error: "Unauthorized" });
+    if (!userId)
+        return JSON.stringify({ success: false, error: "Unauthorized" });
 
     try {
         const pollsCollectionRef = collection(db, "polls");
@@ -76,31 +77,48 @@ export const updatePollResult = async ({ pollId, optionIndex, userId }) => {
         }
 
         const pollData = pollSnapshot.data();
-        const userClickIndex = pollData.clicks?.findIndex((click) => click.userId === userId);
-        const prevOptionIndex = userClickIndex !== -1 ? pollData.clicks[userClickIndex].optionIndex : null;
+        const options = Array.isArray(pollData.options) ? pollData.options : [];
+        const clicks = Array.isArray(pollData.clicks) ? pollData.clicks : [];
 
-        let updatedOptions = [...pollData.options];
+        if (optionIndex < 0 || optionIndex >= options.length) {
+            return JSON.stringify({ success: false, error: "Invalid option index" });
+        }
+
+        const userClickIndex = clicks.findIndex((click) => click.userId === userId);
+        const prevOptionIndex = userClickIndex !== -1 ? clicks[userClickIndex].optionIndex : null;
+
+        let updatedOptions = [...options];
 
         if (prevOptionIndex !== null && prevOptionIndex !== optionIndex) {
-            updatedOptions[prevOptionIndex].clicks = Math.max(0, updatedOptions[prevOptionIndex].clicks - 1);
+            updatedOptions[prevOptionIndex].clicks = Math.max(
+                0,
+                (updatedOptions[prevOptionIndex].clicks || 0) - 1
+            );
         }
 
         updatedOptions[optionIndex].clicks = (updatedOptions[optionIndex].clicks || 0) + 1;
 
         const updatedClicks =
             prevOptionIndex !== null
-                ? pollData.clicks.map((click) =>
+                ? clicks.map((click) =>
                     click.userId === userId ? { userId, optionIndex } : click
                 )
-                : [...(pollData.clicks || []), { userId, optionIndex }];
+                : [...clicks, { userId, optionIndex }];
 
         await updateDoc(pollRef, {
             options: updatedOptions,
             clicks: updatedClicks,
         });
 
-        return JSON.stringify({ success: true });
+        const updatedPollSnapshot = await getDoc(pollRef);
+        const updatedPollData = updatedPollSnapshot.data();
+
+        return JSON.stringify({
+            success: true,
+            poll: { id: pollId, ...updatedPollData },
+        });
     } catch (e) {
+        console.log(e);
         return JSON.stringify({ success: false, error: e.message });
     }
 };
@@ -260,6 +278,51 @@ export const commentOnComment = async ({ pollId, parentCommentId, userId, userna
         await updateDoc(pollRef, { comments });
 
         return JSON.stringify({ success: true, reply });
+    } catch (e) {
+        return JSON.stringify({ success: false, error: e.message });
+    }
+};
+
+export const deleteNestedComment = async ({ pollId, parentCommentId, nestedCommentId, userId }) => {
+    if (!pollId || !parentCommentId || !nestedCommentId || !userId) {
+        return JSON.stringify({ success: false, error: "Missing required parameters" });
+    }
+    try {
+        const pollsCollectionRef = collection(db, "polls");
+        const pollRef = doc(pollsCollectionRef, pollId);
+        const pollSnapshot = await getDoc(pollRef);
+        if (!pollSnapshot.exists()) {
+            return JSON.stringify({ success: false, error: "Poll not found" });
+        }
+        const pollData = pollSnapshot.data();
+        const comments = pollData.comments || [];
+
+        const parentIndex = comments.findIndex((c, index) => {
+            const idToCheck = c.id ? c.id : index.toString();
+            return idToCheck === parentCommentId;
+        });
+
+        if (parentIndex === -1) {
+            return JSON.stringify({ success: false, error: "Parent comment not found" });
+        }
+
+        const parentComment = comments[parentIndex];
+        const replies = parentComment.replies || [];
+
+        const replyToDelete = replies.find(reply => reply.id === nestedCommentId);
+        if (!replyToDelete) {
+            return JSON.stringify({ success: false, error: "Nested comment not found" });
+        }
+
+        if (replyToDelete.userId !== userId) {
+            return JSON.stringify({ success: false, error: "Unauthorized" });
+        }
+
+        const newReplies = replies.filter(reply => reply.id !== nestedCommentId);
+        comments[parentIndex] = { ...parentComment, replies: newReplies };
+
+        await updateDoc(pollRef, { comments });
+        return JSON.stringify({ success: true });
     } catch (e) {
         return JSON.stringify({ success: false, error: e.message });
     }
