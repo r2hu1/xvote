@@ -334,7 +334,7 @@ export default function Page({ params }) {
                                 {comment.replies && comment.replies.length > 0 && (
                                     <div className="mt-2 -mb-3">
                                         {comment.replies.map((reply) => (
-                                            <div key={reply.id} className="mb-3 border-border border rounded-mdp-2">
+                                            <div key={reply.id} className="mb-3 border-border border rounded-md p-2">
                                                 <div className="flex items-center justify-between">
                                                     <div className="grid mb-3">
                                                         <p className="text-sm font-semibold">{reply.username}</p>
