@@ -245,7 +245,7 @@ export default function Page({ params }) {
                             onClick={() => handlePollClick(index)}
                             variant={"outline"}
                             key={index}
-                            className="flex gap-2 items-center justify-between relative z-10 bg-none after:rounded-mdafter:h-full after:absolute after:bottom-0 after:left-0 after:-z-10 after:bg-secondary after:w-[var(--vote-width)]"
+                            className="flex gap-2 items-center justify-between relative z-10 bg-none after:rounded-md after:h-full after:absolute after:bottom-0 after:left-0 after:-z-10 after:bg-secondary after:w-[var(--vote-width)]"
                             style={{ "--vote-width": `${pollData?.options.filter(Boolean).reduce((acc, curr) => acc + curr.clicks, 0) > 0 ? ((option.clicks / pollData?.options.filter(Boolean).reduce((acc, curr) => acc + curr.clicks, 0)) * 100) | 0 : 0}%` }}
                         >
                             <div className="flex items-center gap-2">

@@ -113,7 +113,7 @@ export default function Feed() {
         )
     }
     return (
-        <main className="px-5 py-5 mb-10 md:px-20 lg:px-32">
+        <main className="px-5 py-10 mb-10 md:px-20 lg:px-32">
             <div className="masonry grid gap-5 sm:block">
                 {polls.map((poll) => {
                     const totalClicks = poll?.options?.filter(Boolean).reduce((acc, curr) => acc + curr.clicks, 0);

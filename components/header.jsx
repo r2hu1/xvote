@@ -1,5 +1,5 @@
 "use client";
-import { BellDot, LogOut, Plus } from "lucide-react";
+import { BellDot, ExternalLink, LogOut, Plus } from "lucide-react";
 import { Button } from "./ui/button";
 import Logo from "./logo";
 import Link from "next/link";
@@ -17,6 +17,7 @@ import {
     CredenzaTitle,
     CredenzaTrigger,
 } from "@/components/ui/credenza";
+import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 
 export default function Header() {
     const user = useContext(AuthContext);
@@ -50,8 +51,18 @@ export default function Header() {
                                     Activity notifications and more.
                                 </CredenzaDescription>
                             </CredenzaHeader>
-                            <CredenzaBody className="min-h-32 max-h-[300px]">
-                            </CredenzaBody>
+                            <ScrollArea className="mb-4">
+                                <CredenzaBody className="min-h-32 max-h-[340px]">
+                                    <div className="grid gap-4 max-h-[340px]">
+                                        {Array.from({ length: 20 }).map((_, i) => (
+                                            <div key={i} className="flex items-center justify-between">
+                                                <p className="text-foreground/80"><span className="text-foreground">User1</span> commented on your poll</p>
+                                                <ExternalLink className="w-4 h-4" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </CredenzaBody>
+                            </ScrollArea>
                         </CredenzaContent>
                     </Credenza>
                 </div>

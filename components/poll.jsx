@@ -23,7 +23,7 @@ export default function Poll({ poll, loading, userVoteIndex, handlePollClick, ha
     }
 
     return (
-        <div className="masonry-item border-border border p-4 rounded-md !h-fit">
+        <div className="masonry-item sm:border-border sm:border sm:p-4 sm:rounded-md sm:!h-fit border-b pb-6">
             <Link className="text-xl font-medium" href={`/poll/${poll.id}`}>
                 {poll?.title}
             </Link>
@@ -55,7 +55,7 @@ export default function Poll({ poll, loading, userVoteIndex, handlePollClick, ha
                             onClick={() => handlePollClick(poll.id, index)}
                             variant="outline"
                             key={index}
-                            className="flex gap-2 items-center justify-between relative z-10 bg-none after:rounded-mdafter:h-full after:absolute after:bottom-0 after:left-0 after:-z-10 after:bg-secondary after:w-[var(--vote-width)]"
+                            className="flex gap-2 items-center justify-between relative z-10 bg-none after:rounded-md after:h-full after:absolute after:bottom-0 after:left-0 after:-z-10 after:bg-secondary after:w-[var(--vote-width)]"
                             style={{
                                 "--vote-width": `${totalClicks > 0 ? Math.max(1, percent) : 0}%`,
                             }}
