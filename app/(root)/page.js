@@ -32,10 +32,7 @@ export default function Home() {
   };
 
   const handlePollClick = async (pollId, optionIndex) => {
-    if (!user?.user?.id) {
-      toast.error("Sign in to vote.");
-      return;
-    }
+    if (!user?.user?.id) return toast.error("You must be signed in to vote!");
     console.log("Voting on poll", pollId, "option", optionIndex);
     setLoadingPolls((prev) => ({ ...prev, [pollId]: true }));
     try {
@@ -56,10 +53,7 @@ export default function Home() {
   };
 
   const handleLikeClick = async (pollId) => {
-    if (!user?.user?.id) {
-      toast.error("Sign in to like.");
-      return;
-    }
+    if (!user?.user?.id) return toast.error("You must be signed in to comment!");
     setLoadingPolls((prev) => ({ ...prev, [pollId]: true }));
     try {
       const req = await likePoll({ pollId, userId: user.user.id });

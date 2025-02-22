@@ -26,6 +26,7 @@ export default function Page({ params }) {
     const [replyFormOpen, setReplyFormOpen] = useState({});
 
     const handlePollClick = async (pIndex) => {
+        if (!user?.user?.id) return toast.error("You must be signed in to vote!");
         setLoading(true);
         try {
             const req = await updatePollResult({ pollId: id, optionIndex: pIndex, userId: user.user.id });
@@ -36,7 +37,6 @@ export default function Page({ params }) {
             getPoll();
         } catch (e) {
             console.log(e);
-            toast.error(e.message);
         }
         setLoading(false);
     };
@@ -54,6 +54,7 @@ export default function Page({ params }) {
 
     const handleComment = async (e) => {
         e.preventDefault();
+        if (!user?.user?.id) return toast.error("You must be signed in to comment!");
         setLoading2(true);
         try {
             const req = await addComment({
@@ -91,6 +92,8 @@ export default function Page({ params }) {
     };
 
     const handleLikeClick = async (e) => {
+        if (!user?.user?.id) return toast.error("You must be signed in to like!");
+
         e.target.disabled = true;
         try {
             const req = await likePoll({ pollId: id, userId: user.user.id });
