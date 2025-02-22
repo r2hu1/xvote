@@ -10,6 +10,10 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+
+  .vote-after::after {
+    width: var(--vote-width);
+  }
 }
 
 @layer base {
@@ -50,4 +54,17 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
 }
