@@ -16,7 +16,6 @@ export default function Home() {
   const [fetching, setFetching] = useState(false);
 
   const getPolls = async () => {
-    setFetching(true);
     try {
       const req = await getAllPolls();
       const data = JSON.parse(req);
@@ -26,10 +25,6 @@ export default function Home() {
     } catch (e) {
       console.log(e);
     }
-    finally {
-      setFetching(false);
-    }
-
   };
 
   const updatePollInState = (updatedPoll) => {
@@ -80,7 +75,9 @@ export default function Home() {
   };
 
   useEffect(() => {
+    setFetching(true);
     getPolls();
+    setFetching(false);
   }, []);
 
   if (fetching) {
@@ -117,7 +114,7 @@ export default function Home() {
   }
   return (
     <main className="px-6 py-10 mb-10 md:px-20 lg:px-32">
-      <div className="grid md:grid-cols-2 gap-5">
+      <div className="masonry grid gap-5 sm:block">
         {polls.map((poll) => {
           const totalClicks = poll?.options?.filter(Boolean).reduce((acc, curr) => acc + curr.clicks, 0);
           const userVoteIndex = poll?.clicks?.find((click) => click.userId === user?.user?.id)?.optionIndex;

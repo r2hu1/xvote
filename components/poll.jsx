@@ -10,7 +10,7 @@ export default function Poll({ poll, loading, userVoteIndex, handlePollClick, ha
     const totalClicks = options.reduce((acc, curr) => acc + (curr.clicks || 0), 0);
 
     return (
-        <div className="border-border border p-4 rounded">
+        <div className="masonry-item border-border border p-4 rounded !h-fit">
             <Link className="text-xl font-medium" href={`/poll/${poll.id}`}>
                 {poll?.title}
             </Link>

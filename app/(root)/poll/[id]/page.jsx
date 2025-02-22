@@ -43,7 +43,6 @@ export default function Page({ params }) {
     };
 
     const getPoll = async () => {
-        setFetching(true);
         const req = await getPollById(id);
         const data = JSON.parse(req);
         if (data.success) {
@@ -52,7 +51,6 @@ export default function Page({ params }) {
             setError(data.error);
             console.log(data.error);
         }
-        setFetching(false);
     };
 
     const handleComment = async (e) => {
@@ -172,8 +170,10 @@ export default function Page({ params }) {
     };
 
     useEffect(() => {
+        setFetching(true);
         getPoll();
         getComments();
+        setFetching(false);
     }, []);
 
     const userVoteIndex = pollData?.clicks?.find((click) => click.userId === user?.user?.id)?.optionIndex;
