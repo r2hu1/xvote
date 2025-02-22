@@ -33,7 +33,7 @@ export default function Poll({ poll, loading, userVoteIndex, handlePollClick, ha
                 </p>
             </div>
             <div className="grid gap-2 mt-5">
-                {options.map((option, index) => {
+                {options.filter(option => Boolean(option.content)).map((option, index) => {
                     const percent = totalClicks > 0 ? Math.floor((option.clicks / totalClicks) * 100) : 0;
                     return (
                         <Button

@@ -202,7 +202,7 @@ export default function Page({ params }) {
                     </div>
                 </div>
                 <div className="grid gap-2 mt-4">
-                    {pollData?.options.filter(Boolean).map((option, index) => (
+                    {pollData?.options.filter(option => Boolean(option.content)).map((option, index) => (
                         <Button
                             disabled={loading}
                             onClick={() => handlePollClick(index)}
