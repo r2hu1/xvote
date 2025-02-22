@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { addComment, commentOnComment } from "@/server/poll";
+import { addComment, commentOnComment, deleteNestedComment } from "@/server/poll";
 import { getCommentsByPollId } from "@/server/poll";
 import { deleteComment, getPollById } from "@/server/poll";
 import { likePoll } from "@/server/poll";
@@ -149,6 +149,22 @@ export default function Page({ params }) {
         }
     };
 
+    const handleDeleteNestedComment = async (commentId, nestedCommentId) => {
+        try {
+            const req = await deleteNestedComment({ pollId: id, parentCommentId: commentId, nestedCommentId, userId: user.user.id });
+            const data = JSON.parse(req);
+            if (data.success) {
+                getPoll();
+                getComments();
+            } else {
+                toast.error(data.error);
+            }
+        } catch (e) {
+            console.log(e);
+            toast.error(e.message);
+        }
+    };
+
     useEffect(() => {
         getPoll();
         getComments();
@@ -264,17 +280,29 @@ export default function Page({ params }) {
                                     <div className="mt-2 -mb-3">
                                         {comment.replies.map((reply) => (
                                             <div key={reply.id} className="mb-3 border-border border rounded p-2">
-                                                <div className="grid mb-3">
-                                                    <p className="text-sm font-semibold">{reply.username}</p>
-                                                    <p className="text-xs text-foreground/80">
-                                                        {new Date(reply.createdAt).toLocaleString("default", {
-                                                            year: "numeric",
-                                                            month: "short",
-                                                            day: "numeric",
-                                                            hour: "2-digit",
-                                                            minute: "2-digit",
-                                                        })}
-                                                    </p>
+                                                <div className="flex items-center justify-between">
+                                                    <div className="grid mb-3">
+                                                        <p className="text-sm font-semibold">{reply.username}</p>
+                                                        <p className="text-xs text-foreground/80">
+                                                            {new Date(reply.createdAt).toLocaleString("default", {
+                                                                year: "numeric",
+                                                                month: "short",
+                                                                day: "numeric",
+                                                                hour: "2-digit",
+                                                                minute: "2-digit",
+                                                            })}
+                                                        </p>
+                                                    </div>
+                                                    {user?.user?.id === reply.userId && (
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            onClick={() => { handleDeleteNestedComment(comment.id, reply.id) }}
+                                                            className="h-5 w-5"
+                                                        >
+                                                            <Trash className="h-2.5 w-2.5" />
+                                                        </Button>
+                                                    )}
                                                 </div>
                                                 <p className="text-sm text-foreground">{reply.comment}</p>
                                             </div>
