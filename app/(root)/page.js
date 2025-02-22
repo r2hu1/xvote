@@ -22,7 +22,6 @@ export default function Home() {
       const data = JSON.parse(req);
       if (data.success) {
         setPolls(data.polls);
-        console.log(data.polls);
       }
     } catch (e) {
       console.log(e);
@@ -30,9 +29,13 @@ export default function Home() {
   };
 
   const handlePollClick = async (pollId, optionIndex) => {
+    if (!user?.user?.id) {
+      toast.error("SignIn in to vote.");
+      return;
+    }
     setLoading(true);
     try {
-      const req = await updatePollResult({ pollId, optionIndex, userId: user?.user?.id });
+      const req = await updatePollResult({ pollId, optionIndex, userId: user.user.id });
       const data = JSON.parse(req);
       if (!data.success) {
         toast.error(data.error);
@@ -46,8 +49,12 @@ export default function Home() {
   };
 
   const handleLikeClick = async (pollId) => {
+    if (!user?.user?.id) {
+      toast.error("SignIn to like.");
+      return;
+    }
     try {
-      const req = await likePoll({ pollId, userId: user?.user?.id });
+      const req = await likePoll({ pollId, userId: user.user.id });
       const data = JSON.parse(req);
       if (!data.success) {
         toast.error(data.error);
@@ -77,7 +84,7 @@ export default function Home() {
               <div className="flex items-center gap-2 mt-1">
                 <h1 className="text-sm text-foreground/80">
                   by{" "}
-                  <Link className="text-foreground hover:underline" href={`/@${poll?.author}`}>
+                  <Link className="text-foreground hover:underline" href={`/@${poll?.username}`}>
                     {poll?.username}
                   </Link>
                 </h1>
