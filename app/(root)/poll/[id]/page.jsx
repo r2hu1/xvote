@@ -266,10 +266,10 @@ export default function Page({ params }) {
                     <div className="flex items-center gap-2">
                         <Button
                             className="h-8 px-3 rounded-full"
-                            variant={pollData?.likes.includes(user?.user?.id) ? "default" : "outline"}
+                            variant={"outline"}
                             onClick={handleLikeClick}
                         >
-                            <Heart className={cn("h-4 w-4", pollData?.likes.includes(user?.user?.id) && "fill-rose-500")} />
+                            <Heart className={cn("h-4 w-4", pollData?.likes.includes(user?.user?.id) && "fill-primary")} />
                             {pollData?.likes.length}
                         </Button>
                         <Button className="h-8 px-3 rounded-full" variant="outline">
