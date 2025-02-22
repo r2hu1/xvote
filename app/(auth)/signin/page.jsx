@@ -41,7 +41,7 @@ export default function Page() {
                 let resData = JSON.parse(res);
                 if (resData.success) {
                     toast.success("Signed in successfully!");
-                    router.push("/");
+                    window.location.pathname = "/";
                 }
                 else {
                     toast.error(resData.error);
