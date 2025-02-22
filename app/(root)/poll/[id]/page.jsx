@@ -10,7 +10,7 @@ import { getCommentsByPollId } from "@/server/poll";
 import { deleteComment, getPollById } from "@/server/poll";
 import { likePoll } from "@/server/poll";
 import { updatePollResult } from "@/server/poll";
-import { Check, CornerRightDown, Heart, Loader2, MessageCircleMoreIcon, Trash } from "lucide-react";
+import { Check, CornerRightDown, Heart, Loader2, MessageCircleMoreIcon, Share2, Trash } from "lucide-react";
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -24,6 +24,7 @@ export default function Page({ params }) {
     const [comments, setComments] = useState([]);
     const [loading2, setLoading2] = useState(false);
     const [replyFormOpen, setReplyFormOpen] = useState({});
+    const [fetching, setFetching] = useState(false);
 
     const handlePollClick = async (pIndex) => {
         if (!user?.user?.id) return toast.error("You must be signed in to vote!");
@@ -42,6 +43,7 @@ export default function Page({ params }) {
     };
 
     const getPoll = async () => {
+        setFetching(true);
         const req = await getPollById(id);
         const data = JSON.parse(req);
         if (data.success) {
@@ -50,6 +52,7 @@ export default function Page({ params }) {
             setError(data.error);
             console.log(data.error);
         }
+        setFetching(false);
     };
 
     const handleComment = async (e) => {
@@ -176,6 +179,40 @@ export default function Page({ params }) {
     const userVoteIndex = pollData?.clicks?.find((click) => click.userId === user?.user?.id)?.optionIndex;
     const totalClicks = pollData?.options?.filter(Boolean).reduce((acc, curr) => acc + curr.clicks, 0) || 0;
 
+    if (fetching) {
+        return (
+            <main className="py-10 mb-10 px-6 md:px-20 lg:px-32 md:grid grid-cols-2 gap-7 md:mt-10">
+                <div>
+                    <div className="grid gap-1">
+                        <Skeleton className="h-5" />
+                        <div className="flex mt-3 items-center gap-2">
+                            <Skeleton className="h-4 w-10" />
+                            <Skeleton className="h-4 w-10" />
+                            <Skeleton className="h-4 w-10" />
+                        </div>
+                    </div>
+                    <div className="mt-8 grid gap-3">
+                        {Array.from({ length: 4 }).map((_, i) => (
+                            <Skeleton key={i} className="h-10 w-full" />
+                        ))}
+                    </div>
+                    <div className="flex items-center justify-between mt-4">
+                        <div className="flex items-center gap-2">
+                            <Skeleton className="h-6 w-12 rounded-full" />
+                            <Skeleton className="h-6 w-12 rounded-full" />
+                        </div>
+                        <Skeleton className="h-6 w-12" />
+                    </div>
+                </div>
+                <div className="mt-8 md:mt-0 grid gap-2">
+                    <Skeleton className="h-20 w-full" />
+                    <Skeleton className="h-20 w-full" />
+                    <Skeleton className="h-20 w-full" />
+                    <Skeleton className="h-20 w-full" />
+                </div>
+            </main>
+        )
+    }
     return (
         <main className="py-10 mb-10 px-6 md:px-20 lg:px-32 md:grid grid-cols-2 gap-7 md:mt-10">
             <div>
@@ -225,7 +262,7 @@ export default function Page({ params }) {
                         </Button>
                     ))}
                 </div>
-                <div className="flex items-center mt-3">
+                <div className="flex items-center justify-between mt-3">
                     <div className="flex items-center gap-2">
                         <Button
                             className="h-8 px-3 rounded-full"
@@ -239,6 +276,21 @@ export default function Page({ params }) {
                             <MessageCircleMoreIcon className="h-4 w-4" />
                             {pollData?.comments.length}
                         </Button>
+                    </div>
+                    <div>
+                        <Button onClick={() => {
+                            try {
+                                navigator.share({
+                                    title: poll?.title,
+                                    text: poll?.title,
+                                    url: `${window.location.origin}/poll/${poll.id}`,
+                                });
+                            }
+                            catch (e) {
+                                toast.error("Navigator not supported, copied link to clipboard!");
+                                navigator.clipboard.writeText(`${window.location.origin}/poll/${poll.id}`);
+                            }
+                        }} className="h-8 px-3 rounded-full gap-2" variant="outline">Share <Share2 className="h-3 w-3" /></Button>
                     </div>
                 </div>
             </div>

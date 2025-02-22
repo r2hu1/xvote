@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { Skeleton } from "./ui/skeleton";
-import { Check, Heart, MessageCircleMoreIcon } from "lucide-react";
+import { Check, Heart, MessageCircleMoreIcon, Share2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 export default function Poll({ poll, loading, userVoteIndex, handlePollClick, handleLikeClick, user }) {
     const options = Array.isArray(poll?.options) ? poll.options.filter(Boolean) : [];
@@ -59,7 +60,7 @@ export default function Poll({ poll, loading, userVoteIndex, handlePollClick, ha
                     );
                 })}
             </div>
-            <div className="flex items-center justify-end mt-3">
+            <div className="flex items-center justify-between mt-3">
                 <div className="flex items-center gap-2">
                     <Button
                         className="h-8 px-3 rounded-full"
@@ -75,6 +76,21 @@ export default function Poll({ poll, loading, userVoteIndex, handlePollClick, ha
                             {poll?.comments?.length || 0}
                         </Link>
                     </Button>
+                </div>
+                <div>
+                    <Button onClick={() => {
+                        try {
+                            navigator.share({
+                                title: poll?.title,
+                                text: poll?.title,
+                                url: `${window.location.origin}/poll/${poll.id}`,
+                            });
+                        }
+                        catch (e) {
+                            toast.error("Navigator not supported, copied link to clipboard!");
+                            navigator.clipboard.writeText(`${window.location.origin}/poll/${poll.id}`);
+                        }
+                    }} className="h-8 px-3 rounded-full gap-2" variant="outline">Share <Share2 className="h-3 w-3" /></Button>
                 </div>
             </div>
         </div>
