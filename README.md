@@ -2,7 +2,7 @@
 
 This is an anonymous polling application built using Firebase for the backend and Next.js for the frontend. The UI components are styled using Shadcn and Tailwind CSS.
 
-![home](/public/home.png)
+![home](/public/feed.png)
 
 
 ![poll](/public/poll.png)
