@@ -1,6 +1,6 @@
 "use client";
 
-import { getUser } from "@/server/getUser";
+import { getUser } from "@/server/user";
 import { useEffect, useState } from "react";
 
 export default function CheckAuth({ ifA, children }) {

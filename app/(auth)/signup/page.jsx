@@ -10,7 +10,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import { createUser } from "@/server/createUser";
+import { createUser } from "@/server/user";
 import { ChevronLeft, Copy, Loader2, Save } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

@@ -1,6 +1,6 @@
 "use client";
 
-import { getUser } from "@/server/getUser";
+import { getUser } from "@/server/user";
 import { createContext, useEffect, useState } from "react";
 
 export const AuthContext = createContext(null);

@@ -5,8 +5,8 @@ import Logo from "./logo";
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "./auth-context";
-import { signOut } from "@/server/signOut";
-import { getUser } from "@/server/getUser";
+import { signOut } from "@/server/user";
+import { getUser } from "@/server/user";
 
 export default function Header() {
     const [user, setUser] = useState(null);
