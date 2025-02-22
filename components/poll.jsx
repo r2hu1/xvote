@@ -4,9 +4,12 @@ import { Skeleton } from "./ui/skeleton";
 import { Check, Heart, MessageCircleMoreIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export default function Poll({ poll, loading, userVoteIndex, totalClicks, handlePollClick, handleLikeClick, user }) {
+export default function Poll({ poll, loading, userVoteIndex, handlePollClick, handleLikeClick, user }) {
+    const options = Array.isArray(poll?.options) ? poll.options.filter(Boolean) : [];
+    const totalClicks = options.reduce((acc, curr) => acc + (curr.clicks || 0), 0);
+
     return (
-        <div key={poll.id} className="mb-8 border-border border p-4 rounded">
+        <div className="border-border border p-4 rounded">
             <Link className="text-xl font-medium" href={`/poll/${poll.id}`}>
                 {poll?.title}
             </Link>
@@ -29,51 +32,51 @@ export default function Poll({ poll, loading, userVoteIndex, totalClicks, handle
                         : ""}
                 </p>
             </div>
-            <div className="grid gap-2 mt-3">
-                {poll?.options.filter(Boolean).map((option, index) => (
-                    <Button
-                        disabled={loading}
-                        onClick={() => handlePollClick(poll.id, index)}
-                        variant={"outline"}
-                        key={index}
-                        className="flex gap-2 items-center justify-between relative z-10 bg-none after:rounded after:h-full after:absolute after:bottom-0 after:left-0 after:-z-10 after:bg-secondary after:w-[var(--vote-width)]"
-                        style={{ "--vote-width": `${totalClicks > 0 ? (1, ((option.clicks / totalClicks) * 100) | 0) : 0}%` }}
-                    >
-                        <div className="flex items-center gap-2">
-                            {userVoteIndex === index && <Check className="h-4 w-4" />}
-                            <p className="text-sm">{option.content}</p>
-                        </div>
-                        {loading ? (
-                            <Skeleton className="h-3 w-5" />
-                        ) : (
-                            <p className="text-sm opacity-80">
-                                {totalClicks > 0 ? ((option.clicks / totalClicks) * 100) | 0 : 0}%
-                            </p>
-                        )}
-                    </Button>
-                ))}
+            <div className="grid gap-2 mt-5">
+                {options.map((option, index) => {
+                    const percent = totalClicks > 0 ? Math.floor((option.clicks / totalClicks) * 100) : 0;
+                    return (
+                        <Button
+                            disabled={loading}
+                            onClick={() => handlePollClick(poll.id, index)}
+                            variant="outline"
+                            key={index}
+                            className="flex gap-2 items-center justify-between relative z-10 bg-none after:rounded after:h-full after:absolute after:bottom-0 after:left-0 after:-z-10 after:bg-secondary after:w-[var(--vote-width)]"
+                            style={{
+                                "--vote-width": `${totalClicks > 0 ? Math.max(1, percent) : 0}%`,
+                            }}
+                        >
+                            <div className="flex items-center gap-2">
+                                {userVoteIndex === index && <Check className="h-4 w-4" />}
+                                <p className="text-sm">{option.content}</p>
+                            </div>
+                            {loading ? (
+                                <Skeleton className="h-3 w-5" />
+                            ) : (
+                                <p className="text-sm opacity-80">{percent}%</p>
+                            )}
+                        </Button>
+                    );
+                })}
             </div>
             <div className="flex items-center justify-end mt-3">
                 <div className="flex items-center gap-2">
                     <Button
                         className="h-8 px-3 rounded-full"
-                        variant={poll?.likes.includes(user?.user?.id) ? "default" : "outline"}
+                        variant={poll?.likes?.includes(user?.user?.id) ? "default" : "outline"}
                         onClick={() => handleLikeClick(poll.id)}
                     >
-                        <Heart
-                            className={cn("h-4 w-4", poll?.likes.includes(user?.user?.id) && "fill-rose-500")}
-                        />
-                        {poll?.likes.length}
+                        <Heart className={cn("h-4 w-4", poll?.likes?.includes(user?.user?.id) && "fill-rose-500")} />
+                        {poll?.likes?.length || 0}
                     </Button>
                     <Button className="h-8 px-3 rounded-full" variant="outline" asChild>
                         <Link href={`/poll/${poll.id}`}>
                             <MessageCircleMoreIcon className="h-4 w-4" />
-                            {poll?.comments.length}
+                            {poll?.comments?.length || 0}
                         </Link>
                     </Button>
                 </div>
             </div>
         </div>
     );
-
 }
