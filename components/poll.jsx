@@ -8,9 +8,22 @@ import { toast } from "sonner";
 export default function Poll({ poll, loading, userVoteIndex, handlePollClick, handleLikeClick, user }) {
     const options = Array.isArray(poll?.options) ? poll.options.filter(Boolean) : [];
     const totalClicks = options.reduce((acc, curr) => acc + (curr.clicks || 0), 0);
+    const handleShare = () => {
+        try {
+            window.navigator.share({
+                title: poll?.title,
+                text: poll?.title,
+                url: `${window.location.origin}/poll/${poll.id}`,
+            });
+        }
+        catch (e) {
+            toast.error("Copied link to clipboard!");
+            navigator.clipboard.writeText(`${window.location.origin}/poll/${poll.id}`);
+        }
+    }
 
     return (
-        <div className="masonry-item border-border border p-4 rounded !h-fit">
+        <div className="masonry-item border-border border p-4 rounded-md !h-fit">
             <Link className="text-xl font-medium" href={`/poll/${poll.id}`}>
                 {poll?.title}
             </Link>
@@ -42,7 +55,7 @@ export default function Poll({ poll, loading, userVoteIndex, handlePollClick, ha
                             onClick={() => handlePollClick(poll.id, index)}
                             variant="outline"
                             key={index}
-                            className="flex gap-2 items-center justify-between relative z-10 bg-none after:rounded after:h-full after:absolute after:bottom-0 after:left-0 after:-z-10 after:bg-secondary after:w-[var(--vote-width)]"
+                            className="flex gap-2 items-center justify-between relative z-10 bg-none after:rounded-mdafter:h-full after:absolute after:bottom-0 after:left-0 after:-z-10 after:bg-secondary after:w-[var(--vote-width)]"
                             style={{
                                 "--vote-width": `${totalClicks > 0 ? Math.max(1, percent) : 0}%`,
                             }}
@@ -64,10 +77,10 @@ export default function Poll({ poll, loading, userVoteIndex, handlePollClick, ha
                 <div className="flex items-center gap-2">
                     <Button
                         className="h-8 px-3 rounded-full"
-                        variant={poll?.likes?.includes(user?.user?.id) ? "default" : "outline"}
+                        variant={"outline"}
                         onClick={() => handleLikeClick(poll.id)}
                     >
-                        <Heart className={cn("h-4 w-4", poll?.likes?.includes(user?.user?.id) && "fill-rose-500")} />
+                        <Heart className={cn("h-4 w-4", poll?.likes?.includes(user?.user?.id) && "fill-primary")} />
                         {poll?.likes?.length || 0}
                     </Button>
                     <Button className="h-8 px-3 rounded-full" variant="outline" asChild>
@@ -78,19 +91,7 @@ export default function Poll({ poll, loading, userVoteIndex, handlePollClick, ha
                     </Button>
                 </div>
                 <div>
-                    <Button onClick={() => {
-                        try {
-                            navigator.share({
-                                title: poll?.title,
-                                text: poll?.title,
-                                url: `${window.location.origin}/poll/${poll.id}`,
-                            });
-                        }
-                        catch (e) {
-                            toast.error("Navigator not supported, copied link to clipboard!");
-                            navigator.clipboard.writeText(`${window.location.origin}/poll/${poll.id}`);
-                        }
-                    }} className="h-8 px-3 rounded-full gap-2" variant="outline">Share <Share2 className="h-3 w-3" /></Button>
+                    <Button onClick={handleShare} className="h-8 px-3 rounded-full gap-2" variant="outline">Share <Share2 className="h-3 w-3" /></Button>
                 </div>
             </div>
         </div>

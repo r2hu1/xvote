@@ -7,12 +7,14 @@ export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const fetchUser = async () => {
+        const user = await getUser();
+        if (user) {
+            setUser(user);
+        }
+    };
 
     useEffect(() => {
-        const fetchUser = async () => {
-            const user = await getUser();
-            setUser(user);
-        };
         fetchUser();
     }, []);
 
