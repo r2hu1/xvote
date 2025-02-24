@@ -5,22 +5,22 @@ import { Check, Heart, MessageCircleMoreIcon, Share2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
+export const handleShare = (title, id) => {
+    try {
+        window.navigator.share({
+            title: title,
+            text: title,
+            url: `${window.location.origin}/poll/${id}`,
+        });
+    }
+    catch (e) {
+        toast.error("Copied link to clipboard!");
+        navigator.clipboard.writeText(`${window.location.origin}/poll/${id}`);
+    }
+}
 export default function Poll({ poll, loading, userVoteIndex, handlePollClick, handleLikeClick, user }) {
     const options = Array.isArray(poll?.options) ? poll.options.filter(Boolean) : [];
     const totalClicks = options.reduce((acc, curr) => acc + (curr.clicks || 0), 0);
-    const handleShare = () => {
-        try {
-            window.navigator.share({
-                title: poll?.title,
-                text: poll?.title,
-                url: `${window.location.origin}/poll/${poll.id}`,
-            });
-        }
-        catch (e) {
-            toast.error("Copied link to clipboard!");
-            navigator.clipboard.writeText(`${window.location.origin}/poll/${poll.id}`);
-        }
-    }
 
     return (
         <div className="masonry-item sm:border-border sm:border sm:p-4 sm:rounded-md sm:!h-fit border-b pb-6">
@@ -91,7 +91,7 @@ export default function Poll({ poll, loading, userVoteIndex, handlePollClick, ha
                     </Button>
                 </div>
                 <div>
-                    <Button onClick={handleShare} className="h-8 px-3 rounded-full gap-2" variant="outline">Share <Share2 className="h-3 w-3" /></Button>
+                    <Button onClick={() => { handleShare(poll.title, poll.id) }} className="h-8 px-3 rounded-full gap-2" variant="outline">Share <Share2 className="h-3 w-3" /></Button>
                 </div>
             </div>
         </div>

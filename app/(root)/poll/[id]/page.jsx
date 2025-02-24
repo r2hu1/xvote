@@ -1,6 +1,7 @@
 "use client";
 
 import { AuthContext } from "@/components/auth-context";
+import { handleShare } from "@/components/poll";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -278,19 +279,7 @@ export default function Page({ params }) {
                         </Button>
                     </div>
                     <div>
-                        <Button onClick={() => {
-                            try {
-                                navigator.share({
-                                    title: poll?.title,
-                                    text: poll?.title,
-                                    url: `${window.location.origin}/poll/${poll.id}`,
-                                });
-                            }
-                            catch (e) {
-                                toast.error("Navigator not supported, copied link to clipboard!");
-                                navigator.clipboard.writeText(`${window.location.origin}/poll/${poll.id}`);
-                            }
-                        }} className="h-8 px-3 rounded-full gap-2" variant="outline">Share <Share2 className="h-3 w-3" /></Button>
+                        <Button onClick={() => { handleShare(pollData?.title, id) }} className="h-8 px-3 rounded-full gap-2" variant="outline">Share <Share2 className="h-3 w-3" /></Button>
                     </div>
                 </div>
             </div>
