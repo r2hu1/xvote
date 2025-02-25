@@ -13,7 +13,7 @@ export default function Page({ params }) {
     const [polls, setPolls] = useState([]);
     const user = useContext(AuthContext);
     const [loadingPolls, setLoadingPolls] = useState({});
-    const [isFollowing, setIsFollowing] = useState(false);
+    const [isFollowing, setIsFollowing] = useState([]);
     const [userId, setUserId] = useState(null);
     const updatePollInState = (updatedPoll) => {
         setPolls((prev) =>
@@ -93,8 +93,7 @@ export default function Page({ params }) {
             const req = await followUser(userId);
             const data = JSON.parse(req);
             if (data.success) {
-                toast.success("Followed!");
-                setIsFollowing(true);
+                getUser();
             }
             else {
                 toast.error(data.error);
@@ -110,8 +109,7 @@ export default function Page({ params }) {
             const data = JSON.parse(req);
             if (data.success) {
                 setUserId(data.user.id);
-                console.log(data.user.followers.includes(user?.user?.id));
-                setIsFollowing(data.user.followers.includes(user?.user?.id));
+                setIsFollowing(data.user.followers);
             }
         }
         catch (e) {
@@ -134,7 +132,7 @@ export default function Page({ params }) {
                     </div>
                 </div>
                 <div>
-                    <Button disabled={user?.user?.username === decodeURIComponent(params.id).replace("@", "")} onClick={handleFollow} className="rounded-full h-8">{isFollowing ? <UserMinus className="h-4 w-4" /> : <UserPlus className="h-4 w-4" />}{isFollowing ? "Following" : "Follow"}</Button>
+                    <Button disabled={user?.user?.username === decodeURIComponent(params.id).replace("@", "")} onClick={handleFollow} className="rounded-full h-8">{isFollowing.includes(user?.user?.id) ? <UserMinus className="h-4 w-4" /> : <UserPlus className="h-4 w-4" />}{isFollowing.includes(user?.user?.id) ? "Following" : "Follow"}</Button>
                 </div>
             </div>
 

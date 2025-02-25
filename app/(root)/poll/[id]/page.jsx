@@ -222,7 +222,7 @@ export default function Page({ params }) {
                     <div className="flex items-center gap-2">
                         <h1 className="text-sm text-foreground/80">
                             by{" "}
-                            <Link className="text-foreground hover:underline" href={`/@${pollData?.author}`}>
+                            <Link className="text-foreground hover:underline" href={`/@${pollData?.username}`}>
                                 {pollData?.username}
                             </Link>
                         </h1>
