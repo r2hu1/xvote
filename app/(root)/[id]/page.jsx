@@ -5,7 +5,7 @@ import Poll from "@/components/poll";
 import { Button } from "@/components/ui/button";
 import { getAllPollsByUsername, likePoll, updatePollResult } from "@/server/poll";
 import { followUser, getUserByUsername } from "@/server/user";
-import { UserMinus, UserPlus } from "lucide-react";
+import { Share2, UserMinus, UserPlus } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -88,7 +88,8 @@ export default function Page({ params }) {
         }
     };
 
-    const handleFollow = async () => {
+    const handleFollow = async (e) => {
+        e.target.disabled = true;
         try {
             const req = await followUser(userId);
             const data = JSON.parse(req);
@@ -102,6 +103,7 @@ export default function Page({ params }) {
         catch (e) {
             console.log(e);
         }
+        e.target.disabled = false;
     };
     const getUser = async () => {
         try {
@@ -125,14 +127,15 @@ export default function Page({ params }) {
         <main className="py-8">
             <div className="mb-12 md:rounded-md px-6 py-5 md:mx-20 lg:mx-32 bg-secondary/40 flex items-center justify-between">
                 <div className="grid gap-1">
-                    <h1 className="text-xl font-medium">Polls by <span className="text-foreground/80">{decodeURIComponent(params.id).replace("@", "")}</span></h1>
+                    <h1 className="text-xl font-medium">{decodeURIComponent(params.id).replace("@", "")}</h1>
                     <div className="flex items-center gap-4">
-                        <p>Polls <span>{polls?.length}</span></p>
-                        <p>Followers <span>0</span></p>
+                        <p className="text-sm text-foreground/80">Polls <span className="text-foreground font-medium text-lg">{polls?.length}</span></p>
+                        <p className="text-sm text-foreground/80">Followers <span className="text-foreground font-medium text-lg">{isFollowing?.length}</span></p>
                     </div>
                 </div>
-                <div>
-                    <Button disabled={user?.user?.username === decodeURIComponent(params.id).replace("@", "")} onClick={handleFollow} className="rounded-full h-8">{isFollowing.includes(user?.user?.id) ? <UserMinus className="h-4 w-4" /> : <UserPlus className="h-4 w-4" />}{isFollowing.includes(user?.user?.id) ? "Following" : "Follow"}</Button>
+                <div className="flex items-center gap-2">
+                    <Button size="icon" variant="outline" onClick={() => handleShare(decodeURIComponent(params.id).replace("@", ""), decodeURIComponent(params.id).replace("@", ""))}><Share2 className="h-4 w-4" /></Button>
+                    <Button disabled={user?.user?.username === decodeURIComponent(params.id).replace("@", "")} onClick={handleFollow} size="icon">{isFollowing.includes(user?.user?.id) ? <UserMinus className="h-4 w-4" /> : <UserPlus className="h-4 w-4" />}</Button>
                 </div>
             </div>
 
