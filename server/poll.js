@@ -327,3 +327,20 @@ export const deleteNestedComment = async ({ pollId, parentCommentId, nestedComme
         return JSON.stringify({ success: false, error: e.message });
     }
 };
+
+export const getAllPollsByUsername = async (username) => {
+    try {
+        const pollsCollectionRef = collection(db, "polls");
+        const pollsSnapshot = await getDocs(pollsCollectionRef);
+        const polls = [];
+        for (const pollDoc of pollsSnapshot.docs) {
+            const pollData = pollDoc.data();
+            if (pollData.username === username) {
+                polls.push({ id: pollDoc.id, ...pollData });
+            }
+        }
+        return JSON.stringify({ success: true, polls });
+    } catch (e) {
+        return JSON.stringify({ success: false, error: e.message });
+    }
+};
