@@ -114,22 +114,28 @@ export default function Feed() {
     return (
         <main className="px-5 py-10 mb-10 md:px-20 lg:px-32">
             <div className="masonry grid gap-5 sm:block">
-                {polls.map((poll) => {
-                    const totalClicks = poll?.options?.filter(Boolean).reduce((acc, curr) => acc + curr.clicks, 0);
-                    const userVoteIndex = poll?.clicks?.find((click) => click.userId === user?.user?.id)?.optionIndex;
-                    return (
-                        <Poll
-                            key={poll.id}
-                            poll={poll}
-                            loading={loadingPolls[poll.id] || false}
-                            totalClicks={totalClicks}
-                            userVoteIndex={userVoteIndex}
-                            handlePollClick={handlePollClick}
-                            handleLikeClick={handleLikeClick}
-                            user={user}
-                        />
-                    );
-                })}
+                {polls
+                    .slice()
+                    .sort((a, b) =>
+                        new Date(b.created_at).getTime() -
+                        new Date(a.created_at).getTime()
+                    )
+                    .map((poll) => {
+                        const totalClicks = poll?.options?.filter(Boolean).reduce((acc, curr) => acc + curr.clicks, 0);
+                        const userVoteIndex = poll?.clicks?.find((click) => click.userId === user?.user?.id)?.optionIndex;
+                        return (
+                            <Poll
+                                key={poll.id}
+                                poll={poll}
+                                loading={loadingPolls[poll.id] || false}
+                                totalClicks={totalClicks}
+                                userVoteIndex={userVoteIndex}
+                                handlePollClick={handlePollClick}
+                                handleLikeClick={handleLikeClick}
+                                user={user}
+                            />
+                        );
+                    })}
             </div>
         </main>
     );

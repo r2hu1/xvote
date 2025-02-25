@@ -1,6 +1,6 @@
 "use server";
 import { db } from "@/lib/firebase";
-import { collection, addDoc, doc, getDoc, updateDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc, doc, getDoc, updateDoc, getDocs, deleteDoc } from "firebase/firestore";
 
 export const createPoll = async ({ username, author, title, options, likes = [], tags = [], comments = [] }) => {
     if (!author) return JSON.stringify({ success: false, error: 'Unauthorized' });
@@ -39,7 +39,7 @@ export const createPoll = async ({ username, author, title, options, likes = [],
     }
 };
 
-export const updatePoll = async ({ id, author, content, options }) => {
+export const updatePoll = async ({ username, id, author, title, options, tags = [] }) => {
     if (!author) return JSON.stringify({ success: false, error: 'Unauthorized' });
     try {
         const authorCollectionRef = collection(db, 'authors');
@@ -51,9 +51,12 @@ export const updatePoll = async ({ id, author, content, options }) => {
         const poll = await getDoc(pollRef);
         if (poll.exists() && poll.data().author === author) {
             await updateDoc(pollRef, {
+                username,
                 content,
-                options,
+                title,
                 option_count: options.length,
+                options,
+                tags
             });
             return JSON.stringify({ success: true });
         }
@@ -340,6 +343,20 @@ export const getAllPollsByUsername = async (username) => {
             }
         }
         return JSON.stringify({ success: true, polls });
+    } catch (e) {
+        return JSON.stringify({ success: false, error: e.message });
+    }
+};
+
+export const deletePollById = async (id) => {
+    if (!id) {
+        return JSON.stringify({ success: false, error: "Missing poll id" });
+    }
+    try {
+        const pollsCollectionRef = collection(db, "polls");
+        const pollRef = doc(pollsCollectionRef, id);
+        await deleteDoc(pollRef);
+        return JSON.stringify({ success: true });
     } catch (e) {
         return JSON.stringify({ success: false, error: e.message });
     }

@@ -2,10 +2,11 @@
 
 import { AuthContext } from "@/components/auth-context";
 import Poll from "@/components/poll";
+import ProfPoll from "@/components/profPoll";
 import { Button } from "@/components/ui/button";
-import { getAllPollsByUsername, likePoll, updatePollResult } from "@/server/poll";
+import { deletePollById, getAllPollsByUsername, likePoll, updatePollResult } from "@/server/poll";
 import { followUser, getUserByUsername } from "@/server/user";
-import { Share2, UserMinus, UserPlus } from "lucide-react";
+import { Share2, Trash, UserMinus, UserPlus } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -117,7 +118,24 @@ export default function Page({ params }) {
         catch (e) {
             console.log(e);
         }
-    }
+    };
+
+    const handleDeletePoll = async (pollId) => {
+        if (!user?.user?.id) return toast.error("You must be signed in to delete!");
+        try {
+            const req = await deletePollById(pollId);
+            const data = JSON.parse(req);
+            if (data.success) {
+                await getPolls();
+            }
+            else {
+                toast.error(data.error);
+            }
+        }
+        catch (e) {
+            console.log(e);
+        }
+    };
 
     useEffect(() => {
         getPolls();
@@ -140,23 +158,31 @@ export default function Page({ params }) {
             </div>
 
             <div className="masonry px-6 md:px-20 lg:px-32 grid gap-5 sm:block">
-                {polls.map((poll) => {
-                    const totalClicks = poll?.options?.filter(Boolean).reduce((acc, curr) => acc + curr.clicks, 0);
-                    const userVoteIndex = poll?.clicks?.find((click) => click.userId === user?.user?.id)?.optionIndex;
-                    return (
-                        <Poll
-                            key={poll.id}
-                            poll={poll}
-                            loading={loadingPolls[poll.id] || false}
-                            totalClicks={totalClicks}
-                            userVoteIndex={userVoteIndex}
-                            handlePollClick={handlePollClick}
-                            handleLikeClick={handleLikeClick}
-                            user={user}
-                            titleClassName="text-base"
-                        />
-                    );
-                })}
+                {polls
+                    .slice()
+                    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+                    .map((poll) => {
+                        const totalClicks = poll?.options?.filter(Boolean).reduce((acc, curr) => acc + curr.clicks, 0);
+                        const userVoteIndex = poll?.clicks?.find((click) => click.userId === user?.user?.id)?.optionIndex;
+                        return (
+                            <ProfPoll
+                                key={poll.id}
+                                poll={poll}
+                                loading={loadingPolls[poll.id] || false}
+                                totalClicks={totalClicks}
+                                userVoteIndex={userVoteIndex}
+                                handlePollClick={handlePollClick}
+                                handleLikeClick={handleLikeClick}
+                                user={user}
+                                titleClassName="text-base"
+                                children={
+                                    <div>
+                                        <Trash className="h-4 w-4" onClick={() => handleDeletePoll(poll.id)} />
+                                    </div>
+                                }
+                            />
+                        );
+                    })}
             </div>
             {polls.length <= 0 && (
                 <div className="h-[300px] mx-6 md:mx-20 lg:mx-32 flex items-center justify-center border rounded-md border-border">
