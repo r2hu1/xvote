@@ -130,12 +130,12 @@ export default function Page({ params }) {
                     <h1 className="text-xl font-medium">{decodeURIComponent(params.id).replace("@", "")}</h1>
                     <div className="flex items-center gap-4">
                         <p className="text-sm text-foreground/80">Polls <span className="text-foreground font-medium text-lg">{polls?.length}</span></p>
-                        <p className="text-sm text-foreground/80">Followers <span className="text-foreground font-medium text-lg">{isFollowing?.length}</span></p>
+                        <p className="text-sm text-foreground/80">Followers <span className="text-foreground font-medium text-lg">{isFollowing?.length || 0}</span></p>
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
                     <Button size="icon" variant="outline" onClick={() => handleShare(decodeURIComponent(params.id).replace("@", ""), decodeURIComponent(params.id).replace("@", ""))}><Share2 className="h-4 w-4" /></Button>
-                    <Button disabled={user?.user?.username === decodeURIComponent(params.id).replace("@", "")} onClick={handleFollow} size="icon">{isFollowing.includes(user?.user?.id) ? <UserMinus className="h-4 w-4" /> : <UserPlus className="h-4 w-4" />}</Button>
+                    <Button disabled={user?.user?.username === decodeURIComponent(params.id).replace("@", "")} onClick={handleFollow} size="icon">{isFollowing?.includes(user?.user?.id) ? <UserMinus className="h-4 w-4" /> : <UserPlus className="h-4 w-4" />}</Button>
                 </div>
             </div>
 
@@ -158,6 +158,11 @@ export default function Page({ params }) {
                     );
                 })}
             </div>
+            {polls.length <= 0 && (
+                <div className="h-[300px] mx-6 md:mx-20 lg:mx-32 flex items-center justify-center border rounded-md border-border">
+                    <p className="text-sm text-foreground/80">No polls published!</p>
+                </div>
+            )}
         </main>
     )
 }
