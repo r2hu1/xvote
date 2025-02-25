@@ -223,7 +223,7 @@ export default function Page({ params }) {
                         <h1 className="text-sm text-foreground/80">
                             by{" "}
                             <Link className="text-foreground hover:underline" href={`/@${pollData?.username}`}>
-                                {pollData?.username}
+                                @{pollData?.username}
                             </Link>
                         </h1>
                         <p className="text-sm text-foreground/80">
@@ -297,7 +297,7 @@ export default function Page({ params }) {
                             <div key={comment.id} className="grid gap-2 border border-border p-3 rounded">
                                 <div className="flex justify-between items-center mb-2">
                                     <div className="grid">
-                                        <p className="text-sm">{comment.username}</p>
+                                        <Link href={`/@${comment.username}`} className="text-sm hover:underline">@{comment.username}</Link>
                                         <p className="text-xs text-foreground/80">
                                             {new Date(comment.createdAt).toLocaleString("default", {
                                                 year: "numeric",
@@ -326,7 +326,7 @@ export default function Page({ params }) {
                                             <div key={reply.id} className="mb-3 border-border border rounded-md p-2">
                                                 <div className="flex items-center justify-between">
                                                     <div className="grid mb-3">
-                                                        <p className="text-sm font-semibold">{reply.username}</p>
+                                                        <Link href={`/@${reply.username}`} className="text-sm font-semibold hover:underline">@{reply.username}</Link>
                                                         <p className="text-xs text-foreground/80">
                                                             {new Date(reply.createdAt).toLocaleString("default", {
                                                                 year: "numeric",

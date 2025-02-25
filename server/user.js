@@ -88,7 +88,7 @@ export const getUserByUsername = async (username) => {
 
 export const followUser = async (id) => {
     const user = await getUser();
-    if (!user) return JSON.stringify({ success: false, error: 'Unauthorized' });
+    if (!user) return JSON.stringify({ success: false, error: 'You must signin to follow!' });
 
     try {
         const authorCollectionRef = collection(db, 'authors');

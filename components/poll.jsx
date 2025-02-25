@@ -31,7 +31,7 @@ export default function Poll({ poll, loading, userVoteIndex, handlePollClick, ha
                 <h1 className="text-sm text-foreground/80">
                     by{" "}
                     <Link className="text-foreground hover:underline" href={`/@${poll?.username}`}>
-                        {poll?.username}
+                        @{poll?.username}
                     </Link>
                 </h1>
                 <p className="text-sm text-foreground/80">
