@@ -1,6 +1,6 @@
 "use server";
 import { db } from "@/lib/firebase";
-import { addDoc, collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { decrypt, encrypt } from "@/lib/crypto";
 import { generateJWT } from "@/lib/jwt";
 import { cookies } from "next/headers";
@@ -61,3 +61,55 @@ export async function getUser() {
     if (!token) return null;
     return verifyJWT(token);
 };
+
+
+export const getUserByUsername = async (username) => {
+    try {
+        const authorCollectionRef = collection(db, 'authors');
+        const q = query(authorCollectionRef, where('username', '==', username));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+            const authorDoc = querySnapshot.docs[0];
+
+            return JSON.stringify({
+                success: true,
+                user: { ...authorDoc.data(), id: authorDoc.id }
+            });
+        }
+
+        return JSON.stringify({ success: false, error: 'User not found' });
+
+    } catch (e) {
+        console.error("Firestore Error:", e);
+        return JSON.stringify({ success: false, error: e.message });
+    }
+};
+
+export const followUser = async (id) => {
+    const user = await getUser();
+    if (!user) return JSON.stringify({ success: false, error: 'Unauthorized' });
+
+    try {
+        const authorCollectionRef = collection(db, 'authors');
+        const authorDoc = await getDoc(doc(authorCollectionRef, id));
+
+        if (!authorDoc.exists()) {
+            return JSON.stringify({ success: false, error: 'User not found' });
+        }
+
+        const author = authorDoc.data();
+        const followers = author.followers || [];
+
+        const isFollowing = followers.includes(user.id);
+
+        await updateDoc(doc(authorCollectionRef, id), {
+            followers: isFollowing ? followers.filter((id) => id !== user.id) : [...followers, user.id],
+        });
+
+        return JSON.stringify({ success: true, isFollowing: !isFollowing });
+    } catch (e) {
+        return JSON.stringify({ success: false, error: e.message });
+    }
+};
+
