@@ -79,57 +79,57 @@ export default function Feed() {
         setFetching(false);
     }, []);
 
-    if (!fetching) {
+    if (fetching) {
         return (
-            <main className="px-5 py-10 mb-10 md:px-20 lg:px-32">
-                <div className="masonry grid gap-5 sm:block">
-                    {polls.map((poll) => {
-                        const totalClicks = poll?.options?.filter(Boolean).reduce((acc, curr) => acc + curr.clicks, 0);
-                        const userVoteIndex = poll?.clicks?.find((click) => click.userId === user?.user?.id)?.optionIndex;
-                        return (
-                            <Poll
-                                key={poll.id}
-                                poll={poll}
-                                loading={loadingPolls[poll.id] || false}
-                                totalClicks={totalClicks}
-                                userVoteIndex={userVoteIndex}
-                                handlePollClick={handlePollClick}
-                                handleLikeClick={handleLikeClick}
-                                user={user}
-                            />
-                        );
-                    })}
+            <main className="px-6 py-5 mb-10 md:px-20 lg:px-32">
+                <div className="grid md:grid-cols-2 gap-5">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                        <div key={i} className="p-3">
+                            <div className="grid gap-1">
+                                <Skeleton className="h-5" />
+                                <div className="flex mt-3 items-center gap-2">
+                                    <Skeleton className="h-4 w-10" />
+                                    <Skeleton className="h-4 w-10" />
+                                    <Skeleton className="h-4 w-10" />
+                                </div>
+                            </div>
+                            <div className="mt-8 grid gap-3">
+                                {Array.from({ length: 4 }).map((_, i) => (
+                                    <Skeleton key={i} className="h-10 w-full" />
+                                ))}
+                            </div>
+                            <div className="flex items-center justify-between mt-4">
+                                <div className="flex items-center gap-2">
+                                    <Skeleton className="h-6 w-12 rounded-full" />
+                                    <Skeleton className="h-6 w-12 rounded-full" />
+                                </div>
+                                <Skeleton className="h-6 w-12" />
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </main>
         );
     }
     return (
-        <main className="px-6 py-5 mb-10 md:px-20 lg:px-32">
-            <div className="grid md:grid-cols-2 gap-5">
-                {Array.from({ length: 6 }).map((_, i) => (
-                    <div key={i} className="p-3 border border-border rounded">
-                        <div className="grid gap-1">
-                            <Skeleton className="h-5" />
-                            <div className="flex mt-3 items-center gap-2">
-                                <Skeleton className="h-4 w-10" />
-                                <Skeleton className="h-4 w-10" />
-                                <Skeleton className="h-4 w-10" />
-                            </div>
-                        </div>
-                        <div className="mt-8 grid gap-3">
-                            {Array.from({ length: 4 }).map((_, i) => (
-                                <Skeleton key={i} className="h-10 w-full" />
-                            ))}
-                        </div>
-                        <div className="flex items-center justify-between mt-4">
-                            <div className="flex items-center gap-2">
-                                <Skeleton className="h-6 w-12 rounded-full" />
-                                <Skeleton className="h-6 w-12 rounded-full" />
-                            </div>
-                            <Skeleton className="h-6 w-12" />
-                        </div>
-                    </div>
-                ))}
+        <main className="px-5 py-10 mb-10 md:px-20 lg:px-32">
+            <div className="masonry grid gap-5 sm:block">
+                {polls.map((poll) => {
+                    const totalClicks = poll?.options?.filter(Boolean).reduce((acc, curr) => acc + curr.clicks, 0);
+                    const userVoteIndex = poll?.clicks?.find((click) => click.userId === user?.user?.id)?.optionIndex;
+                    return (
+                        <Poll
+                            key={poll.id}
+                            poll={poll}
+                            loading={loadingPolls[poll.id] || false}
+                            totalClicks={totalClicks}
+                            userVoteIndex={userVoteIndex}
+                            handlePollClick={handlePollClick}
+                            handleLikeClick={handleLikeClick}
+                            user={user}
+                        />
+                    );
+                })}
             </div>
         </main>
     );

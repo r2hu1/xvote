@@ -18,13 +18,13 @@ export const handleShare = (title, id) => {
         navigator.clipboard.writeText(`${window.location.origin}/poll/${id}`);
     }
 }
-export default function Poll({ poll, loading, userVoteIndex, handlePollClick, handleLikeClick, user }) {
+export default function Poll({ poll, loading, userVoteIndex, handlePollClick, handleLikeClick, user, titleClassName }) {
     const options = Array.isArray(poll?.options) ? poll.options.filter(Boolean) : [];
     const totalClicks = options.reduce((acc, curr) => acc + (curr.clicks || 0), 0);
 
     return (
         <div className="masonry-item sm:border-border sm:border sm:p-4 sm:rounded-md sm:!h-fit border-b pb-6">
-            <Link className="text-xl font-medium" href={`/poll/${poll.id}`}>
+            <Link className={cn("text-xl font-medium", titleClassName)} href={`/poll/${poll.id}`}>
                 {poll?.title}
             </Link>
             <div className="flex items-center gap-2 mt-1">
