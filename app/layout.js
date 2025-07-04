@@ -4,6 +4,7 @@ import { Toaster } from "sonner";
 import { AuthProvider } from "@/components/auth-context";
 import Footer from "@/components/footer";
 import Preloader from "@/components/preloader";
+import { FeedProvider } from "@/components/feed-context";
 
 const font = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -22,7 +23,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={font.className}>
         <AuthProvider>
-          {children}
+          <FeedProvider>{children}</FeedProvider>
         </AuthProvider>
         <Footer />
         <Toaster position="top-center" duration={2000} />
